@@ -1,1 +1,770 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For sale Exam Scheduling Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#3b82f6',
+                        'secondary': '#10b981',
+                        'accent': '#6366f1',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <div class="container mx-auto px-4 py-8 flex-grow">
+        <div class="bg-white shadow-xl rounded-lg p-6">
+            <h1 class="text-3xl font-bold text-center mb-8 text-primary">Exam Scheduling Management by:JC</h1>
+            
+            <!-- Subject Management -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-4 text-secondary">Subject Management</h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block mb-2 font-medium">Subject Name</label>
+                        <input type="text" id="subjectName" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Department</label>
+                        <select id="subjectDepartment" class="w-full p-2 border rounded">
+                            <option value="">Select Department</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Exam Duration (minutes)</label>
+                        <input type="number" id="subjectDuration" class="w-full p-2 border rounded" min="30" max="180">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="addSubject()" class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                            Add Subject
+                        </button>
+                    </div>
+                </div>
+                <div id="subjectList" class="mt-4 grid md:grid-cols-3 gap-2"></div>
+            </div>
+
+            <!-- Existing Department, Room, Teacher Management Sections (Previous code) -->
+            <!-- ... (Department, Room, Teacher management sections remain the same) ... -->
+            
+<!-- Department Management -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-4 text-secondary">Department Management</h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block mb-2 font-medium">Department Name</label>
+                        <input type="text" id="departmentName" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Room Limit</label>
+                        <input type="number" id="departmentRoomLimit" class="w-full p-2 border rounded" min="1">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="addDepartment()" class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                            Add Department
+                        </button>
+                    </div>
+                </div>
+                <div id="departmentList" class="mt-4 grid md:grid-cols-3 gap-2"></div>
+            </div>
+
+            <!-- Room Management -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-4 text-secondary">Room Management</h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block mb-2 font-medium">Department</label>
+                        <select id="roomDepartment" class="w-full p-2 border rounded">
+                            <option value="">Select Department</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Room Number</label>
+                        <input type="text" id="roomNumber" class="w-full p-2 border rounded">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="addRoom()" class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                            Add Room
+                        </button>
+                    </div>
+                </div>
+                <div id="roomList" class="mt-4 grid md:grid-cols-3 gap-2"></div>
+            </div>
+
+            <!-- Teacher Management -->
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold mb-4 text-secondary">Teacher Management</h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block mb-2 font-medium">Teacher Name</label>
+                        <input type="text" id="teacherName" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Department</label>
+                        <select id="teacherDepartment" class="w-full p-2 border rounded">
+                            <option value="">Select Department</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="addTeacher()" class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                            Add Teacher
+                        </button>
+                    </div>
+                </div>
+                <div id="teacherList" class="mt-4 grid md:grid-cols-3 gap-2"></div>
+            </div>
+            <!-- Advanced Exam Scheduling -->
+            <div>
+                <h2 class="text-xl font-semibold mb-4 text-secondary">Advanced Exam Scheduling</h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block mb-2 font-medium">Department</label>
+                        <select id="scheduleDepartment" class="w-full p-2 border rounded" onchange="updateRoomsAndSubjects()">
+                            <option value="">Select Department</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Room</label>
+                        <select id="scheduleRoom" class="w-full p-2 border rounded">
+                            <option value="">Select Room</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Subject</label>
+                        <select id="scheduleSubject" class="w-full p-2 border rounded">
+                            <option value="">Select Subject</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Teacher</label>
+                        <select id="scheduleTeacher" class="w-full p-2 border rounded">
+                            <option value="">Select Teacher</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Exam Date</label>
+                        <input type="date" id="scheduleDate" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="block mb-2 font-medium">Start Time</label>
+                        <input type="time" id="scheduleStartTime" class="w-full p-2 border rounded">
+                    </div>
+                    <div class="col-span-full flex justify-center">
+                        <button onclick="scheduleExam()" class="bg-secondary text-white px-6 py-2 rounded hover:bg-green-700 transition">
+                            Schedule Exam
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scheduled Exams -->
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4 text-secondary">Scheduled Exams</h2>
+                <div id="scheduledExamsList" class="overflow-x-auto">
+                    <table class="w-full bg-white shadow rounded">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-3 text-left">Department</th>
+                                <th class="p-3 text-left">Room</th>
+                                <th class="p-3 text-left">Subject</th>
+                                <th class="p-3 text-left">Teacher</th>
+                                <th class="p-3 text-left">Date</th>
+                                <th class="p-3 text-left">Time</th>
+                                <th class="p-3 text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduledExamsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Conflict Warning -->
+    <div id="conflictModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h2 class="text-xl font-bold text-red-600 mb-4">Scheduling Conflict</h2>
+            <p id="conflictMessage" class="mb-6"></p>
+            <div class="flex justify-end space-x-4">
+                <button onclick="closeConflictModal()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// Data Management
+function initializeStorage() {
+    const storageItems = [
+        'departments', 'rooms', 'teachers', 
+        'subjects', 'scheduledExams'
+    ];
+
+    storageItems.forEach(item => {
+        if (!localStorage.getItem(item)) {
+            localStorage.setItem(item, JSON.stringify([]));
+        }
+    });
+}
+
+// Department Management
+function addDepartment() {
+    const departmentName = document.getElementById('departmentName').value.trim();
+    const roomLimit = document.getElementById('departmentRoomLimit').value;
+
+    if (!departmentName || !roomLimit) {
+        alert('Please enter both department name and room limit');
+        return;
+    }
+
+    const departments = JSON.parse(localStorage.getItem('departments'));
+    
+    // Check if department already exists
+    if (departments.some(dept => dept.name === departmentName)) {
+        alert('Department already exists');
+        return;
+    }
+
+    departments.push({ name: departmentName, roomLimit: parseInt(roomLimit) });
+    localStorage.setItem('departments', JSON.stringify(departments));
+    
+    // Clear input fields
+    document.getElementById('departmentName').value = '';
+    document.getElementById('departmentRoomLimit').value = '';
+
+    // Refresh department lists
+    renderDepartments();
+    updateDepartmentDropdowns();
+}
+
+function renderDepartments() {
+    const departments = JSON.parse(localStorage.getItem('departments'));
+    const departmentList = document.getElementById('departmentList');
+    departmentList.innerHTML = '';
+
+    departments.forEach((dept, index) => {
+        const departmentDiv = document.createElement('div');
+        departmentDiv.className = 'bg-gray-100 p-3 rounded flex justify-between items-center';
+        departmentDiv.innerHTML = `
+            <span>${dept.name} (Limit: ${dept.roomLimit})</span>
+            <button onclick="removeDepartment(${index})" class="text-red-500 hover:text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        `;
+        departmentList.appendChild(departmentDiv);
+    });
+}
+
+function removeDepartment(index) {
+    const departments = JSON.parse(localStorage.getItem('departments'));
+    const removedDepartment = departments[index].name;
+
+    // Remove associated rooms, teachers, and subjects
+    let rooms = JSON.parse(localStorage.getItem('rooms'));
+    rooms = rooms.filter(room => room.department !== removedDepartment);
+    localStorage.setItem('rooms', JSON.stringify(rooms));
+
+    let teachers = JSON.parse(localStorage.getItem('teachers'));
+    teachers = teachers.filter(teacher => teacher.department !== removedDepartment);
+    localStorage.setItem('teachers', JSON.stringify(teachers));
+
+    let subjects = JSON.parse(localStorage.getItem('subjects'));
+    subjects = subjects.filter(subject => subject.department !== removedDepartment);
+    localStorage.setItem('subjects', JSON.stringify(subjects));
+
+    // Remove scheduled exams for this department
+    let scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
+    scheduledExams = scheduledExams.filter(exam => exam.department !== removedDepartment);
+    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
+
+    // Remove department
+    departments.splice(index, 1);
+    localStorage.setItem('departments', JSON.stringify(departments));
+
+    // Refresh lists
+    renderDepartments();
+    updateDepartmentDropdowns();
+    renderRooms();
+    renderTeachers();
+    renderSubjects();
+    renderScheduledExams();
+}
+
+// Room Management
+function addRoom() {
+    const department = document.getElementById('roomDepartment').value;
+    const roomNumber = document.getElementById('roomNumber').value.trim();
+
+    if (!department || !roomNumber) {
+        alert('Please select a department and enter a room number');
+        return;
+    }
+
+    const rooms = JSON.parse(localStorage.getItem('rooms'));
+    
+    // Check if room already exists
+    if (rooms.some(room => room.number === roomNumber && room.department === department)) {
+        alert('Room already exists in this department');
+        return;
+    }
+
+    // Check department room limit
+    const departmentsData = JSON.parse(localStorage.getItem('departments'));
+    const departmentData = departmentsData.find(dept => dept.name === department);
+    const departmentRooms = rooms.filter(room => room.department === department);
+    
+    if (departmentRooms.length >= departmentData.roomLimit) {
+        alert(`Room limit for ${department} department has been reached`);
+        return;
+    }
+
+    rooms.push({ number: roomNumber, department });
+    localStorage.setItem('rooms', JSON.stringify(rooms));
+    
+    // Clear input fields
+    document.getElementById('roomNumber').value = '';
+
+    // Refresh room lists
+    renderRooms();
+}
+
+function renderRooms() {
+    const rooms = JSON.parse(localStorage.getItem('rooms'));
+    const roomList = document.getElementById('roomList');
+    roomList.innerHTML = '';
+
+    rooms.forEach((room, index) => {
+        const roomDiv = document.createElement('div');
+        roomDiv.className = 'bg-gray-100 p-3 rounded flex justify-between items-center';
+        roomDiv.innerHTML = `
+            <span>${room.number} (${room.department})</span>
+            <button onclick="removeRoom(${index})" class="text-red-500 hover:text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        `;
+        roomList.appendChild(roomDiv);
+    });
+}
+
+function removeRoom(index) {
+    const rooms = JSON.parse(localStorage.getItem('rooms'));
+    const removedRoom = rooms[index];
+
+    // Remove scheduled exams for this room
+    let scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
+    scheduledExams = scheduledExams.filter(exam => 
+        exam.room !== removedRoom.number || exam.department !== removedRoom.department
+    );
+    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
+
+    // Remove room
+    rooms.splice(index, 1);
+    localStorage.setItem('rooms', JSON.stringify(rooms));
+
+    // Refresh lists
+    renderRooms();
+    renderScheduledExams();
+}
+
+// Teacher Management
+function addTeacher() {
+    const teacherName = document.getElementById('teacherName').value.trim();
+    const department = document.getElementById('teacherDepartment').value;
+
+    if (!teacherName || !department) {
+        alert('Please enter teacher name and select a department');
+        return;
+    }
+
+    const teachers = JSON.parse(localStorage.getItem('teachers'));
+    
+    // Check if teacher already exists
+    if (teachers.some(teacher => teacher.name === teacherName && teacher.department === department)) {
+        alert('Teacher already exists in this department');
+        return;
+    }
+
+    teachers.push({ name: teacherName, department });
+    localStorage.setItem('teachers', JSON.stringify(teachers));
+    
+    // Clear input fields
+    document.getElementById('teacherName').value = '';
+
+    // Refresh teacher lists
+    renderTeachers();
+}
+
+function renderTeachers() {
+    const teachers = JSON.parse(localStorage.getItem('teachers'));
+    const teacherList = document.getElementById('teacherList');
+    teacherList.innerHTML = '';
+
+    teachers.forEach((teacher, index) => {
+        const teacherDiv = document.createElement('div');
+        teacherDiv.className = 'bg-gray-100 p-3 rounded flex justify-between items-center';
+        teacherDiv.innerHTML = `
+            <span>${teacher.name} (${teacher.department})</span>
+            <button onclick="removeTeacher(${index})" class="text-red-500 hover:text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        `;
+        teacherList.appendChild(teacherDiv);
+    });
+}
+
+function removeTeacher(index) {
+    const teachers = JSON.parse(localStorage.getItem('teachers'));
+    const removedTeacher = teachers[index];
+
+    // Remove scheduled exams for this teacher
+    let scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
+    scheduledExams = scheduledExams.filter(exam => 
+        exam.teacher !== removedTeacher.name || exam.department !== removedTeacher.department
+    );
+    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
+
+    // Remove teacher
+    teachers.splice(index, 1);
+    localStorage.setItem('teachers', JSON.stringify(teachers));
+
+    // Refresh lists
+    renderTeachers();
+    renderScheduledExams();
+}
+
+// Subject Management
+function addSubject() {
+    const subjectName = document.getElementById('subjectName').value.trim();
+    const department = document.getElementById('subjectDepartment').value;
+    const duration = document.getElementById('subjectDuration').value;
+
+    if (!subjectName || !department || !duration) {
+        alert('Please fill in all subject details');
+        return;
+    }
+
+    const subjects = JSON.parse(localStorage.getItem('subjects'));
+    
+    // Check if subject already exists
+    if (subjects.some(subject => 
+        subject.name === subjectName && 
+        subject.department === department
+    )) {
+        alert('Subject already exists in this department');
+        return;
+    }
+
+    subjects.push({ 
+        name: subjectName, 
+        department, 
+        duration: parseInt(duration) 
+    });
+    localStorage.setItem('subjects', JSON.stringify(subjects));
+    
+    // Clear input fields
+    document.getElementById('subjectName').value = '';
+    document.getElementById('subjectDuration').value = '';
+
+    // Refresh subject lists
+    renderSubjects();
+}
+
+function renderSubjects() {
+    const subjects = JSON.parse(localStorage.getItem('subjects'));
+    const subjectList = document.getElementById('subjectList');
+    subjectList.innerHTML = '';
+
+    subjects.forEach((subject, index) => {
+        const subjectDiv = document.createElement('div');
+        subjectDiv.className = 'bg-gray-100 p-3 rounded flex justify-between items-center';
+        subjectDiv.innerHTML = `
+            <span>${subject.name} (${subject.department}) - ${subject.duration} mins</span>
+            <button onclick="removeSubject(${index})" class="text-red-500 hover:text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        `;
+        subjectList.appendChild(subjectDiv);
+    });
+
+    // Update department dropdowns
+    updateDepartmentDropdowns();
+}
+
+function removeSubject(index) {
+    const subjects = JSON.parse(localStorage.getItem('subjects'));
+    const removedSubject = subjects[index];
+
+    // Remove scheduled exams for this subject
+    let scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
+    scheduledExams = scheduledExams.filter(exam => 
+        exam.subject !== removedSubject.name || 
+        exam.department !== removedSubject.department
+    );
+    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
+
+    // Remove subject
+    subjects.splice(index, 1);
+    localStorage.setItem('subjects', JSON.stringify(subjects));
+
+    // Refresh lists
+    renderSubjects();
+    renderScheduledExams();
+}
+
+// Exam Scheduling Utility Functions
+function updateDepartmentDropdowns() {
+    const departments = JSON.parse(localStorage.getItem('departments'));
+    const departmentDropdowns = [
+        document.getElementById('roomDepartment'),
+        document.getElementById('teacherDepartment'),
+        document.getElementById('subjectDepartment'),
+        document.getElementById('scheduleDepartment')
+    ];
+
+    departmentDropdowns.forEach(dropdown => {
+        const currentValue = dropdown.value;
+        dropdown.innerHTML = '<option value="">Select Department</option>';
+        
+        departments.forEach(dept => {
+            const option = document.createElement('option');
+            option.value = dept.name;
+            option.textContent = dept.name;
+            dropdown.appendChild(option);
+        });
+
+        // Preserve selected value if it still exists
+        if (currentValue && departments.some(dept => dept.name === currentValue)) {
+            dropdown.value = currentValue;
+        }
+    });
+}
+
+function updateRoomsAndSubjects() {
+    const department = document.getElementById('scheduleDepartment').value;
+    
+    // Update Rooms Dropdown
+    const roomDropdown = document.getElementById('scheduleRoom');
+    const rooms = JSON.parse(localStorage.getItem('rooms'));
+    
+    // Clear existing options
+    roomDropdown.innerHTML = '<option value="">Select Room</option>';
+
+    // Filter rooms by selected department
+    const departmentRooms = rooms.filter(room => room.department === department);
+    
+    departmentRooms.forEach(room => {
+        const option = document.createElement('option');
+        option.value = room.number;
+        option.textContent = room.number;
+        roomDropdown.appendChild(option);
+    });
+
+    // Update Subjects Dropdown
+    const subjectDropdown = document.getElementById('scheduleSubject');
+    const subjects = JSON.parse(localStorage.getItem('subjects'));
+    
+    // Clear existing options
+    subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
+
+    // Filter subjects by selected department
+    const departmentSubjects = subjects.filter(subject => subject.department === department);
+    
+    departmentSubjects.forEach(subject => {
+        const option = document.createElement('option');
+        option.value = subject.name;
+        option.textContent = `${subject.name} (${subject.duration} mins)`;
+        subjectDropdown.appendChild(option);
+    });
+
+    // Update teacher dropdown
+    updateTeachers(department);
+}
+
+function updateTeachers(department) {
+    const teacherDropdown = document.getElementById('scheduleTeacher');
+    const teachers = JSON.parse(localStorage.getItem('teachers'));
+    
+    // Clear existing options
+    teacherDropdown.innerHTML = '<option value="">Select Teacher</option>';
+
+    // Filter teachers by selected department
+    const departmentTeachers = teachers.filter(teacher => teacher.department === department);
+    
+    departmentTeachers.forEach(teacher => {
+        const option = document.createElement('option');
+        option.value = teacher.name;
+        option.textContent = teacher.name;
+        teacherDropdown.appendChild(option);
+    });
+}
+
+function isTimeOverlap(existingStart, existingEnd, newStart, newEnd) {
+    // Convert times to minutes since midnight
+    const convertToMinutes = (time) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+    };
+
+    const existingStartMinutes = convertToMinutes(existingStart);
+    const existingEndMinutes = convertToMinutes(existingEnd);
+    const newStartMinutes = convertToMinutes(newStart);
+    const newEndMinutes = convertToMinutes(newEnd);
+
+    // Check for overlap
+    return !(newEndMinutes <= existingStartMinutes || newStartMinutes >= existingEndMinutes);
+}
+
+function scheduleExam() {
+    const department = document.getElementById('scheduleDepartment').value;
+    const room = document.getElementById('scheduleRoom').value;
+    const subject = document.getElementById('scheduleSubject').value;
+    const teacher = document.getElementById('scheduleTeacher').value;
+    const date = document.getElementById('scheduleDate').value;
+    const startTime = document.getElementById('scheduleStartTime').value;
+
+    // Validate inputs
+    if (!department || !room || !subject || !teacher || !date || !startTime) {
+        alert('Please fill in all scheduling details');
+        return;
+    }
+
+    // Get subject duration
+    const subjects = JSON.parse(localStorage.getItem('subjects'));
+    const selectedSubject = subjects.find(s => s.name === subject);
+    const duration = selectedSubject.duration;
+
+    // Calculate end time based on duration
+    const startDateTime = new Date(`${date}T${startTime}`);
+    const endDateTime = new Date(startDateTime.getTime() + duration * 60000);
+    const endTime = endDateTime.toTimeString().slice(0,5);
+
+    // Check for scheduling conflicts
+    const scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
+    
+    // Check room conflict
+    const roomConflict = scheduledExams.find(exam => 
+        exam.room === room && 
+        exam.date === date && 
+        isTimeOverlap(exam.startTime, exam.endTime, startTime, endTime)
+    );
+
+    // Check teacher conflict
+    const teacherConflict = scheduledExams.find(exam => 
+        exam.teacher === teacher && 
+        exam.date === date && 
+        isTimeOverlap(exam.startTime, exam.endTime, startTime, endTime)
+    );
+
+    // Show conflict modal if conflict exists
+    if (roomConflict || teacherConflict) {
+        const conflictModal = document.getElementById('conflictModal');
+        const conflictMessage = document.getElementById('conflictMessage');
+        
+        conflictMessage.innerHTML = '';
+        if (roomConflict) {
+            conflictMessage.innerHTML += `Room ${room} is already scheduled on ${date} during this time.<br>`;
+        }
+        if (teacherConflict) {
+            conflictMessage.innerHTML += `Teacher ${teacher} is already scheduled on ${date} during this time.`;
+        }
+        
+        conflictModal.classList.remove('hidden');
+        conflictModal.classList.add('flex');
+        return;
+    }
+
+    // Add new exam schedule
+    scheduledExams.push({
+        department,
+        room,
+        subject,
+        teacher,
+        date,
+        startTime,
+        endTime
+    });
+
+    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
+
+    // Render scheduled exams
+    renderScheduledExams();
+
+    // Clear input fields
+    document.getElementById('scheduleDepartment').value = '';
+    document.getElementById('scheduleRoom').innerHTML = '<option value="">Select Room</option>';
+    document.getElementById('scheduleSubject').innerHTML = '<option value="">Select Subject</option>';
+    document.getElementById('scheduleTeacher').innerHTML = '<option value="">Select Teacher</option>';
+    document.getElementById('scheduleDate').value = '';
+    document.getElementById('scheduleStartTime').value = '';
+}
+
+function renderScheduledExams() {
+    const scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
+    const scheduledExamsBody = document.getElementById('scheduledExamsBody');
+    scheduledExamsBody.innerHTML = '';
+
+    scheduledExams.forEach((exam, index) => {
+        const row = document.createElement('tr');
+        row.className = 'border-b hover:bg-gray-50';
+        row.innerHTML = `
+            <td class="p-3">${exam.department}</td>
+            <td class="p-3">${exam.room}</td>
+            <td class="p-3">${exam.subject}</td>
+            <td class="p-3">${exam.teacher}</td>
+            <td class="p-3">${exam.date}</td>
+            <td class="p-3">${exam.startTime} - ${exam.endTime}</td>
+            <td class="p-3">
+                <button onclick="deleteScheduledExam(${index})" class="text-red-500 hover:text-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </td>
+        `;
+        scheduledExamsBody.appendChild(row);
+    });
+}
+
+function deleteScheduledExam(index) {
+    const scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
+    scheduledExams.splice(index, 1);
+    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
+    renderScheduledExams();
+}
+
+function closeConflictModal() {
+    const conflictModal = document.getElementById('conflictModal');
+    conflictModal.classList.remove('flex');
+    conflictModal.classList.add('hidden');
+}
+
+// Initialize on page load
+window.onload = function() {
+    initializeStorage();
+    renderDepartments();
+    renderRooms();
+    renderTeachers();
+    renderSubjects();
+    renderScheduledExams();
+    updateDepartmentDropdowns();
+};
+    </script>
+</body>
+</html>
