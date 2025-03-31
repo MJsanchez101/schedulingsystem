@@ -1,69 +1,94 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For sale Exam Scheduling Management</title>
+    <title>Advanced Exam Scheduling Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'primary': '#3b82f6',
-                        'secondary': '#10b981',
-                        'accent': '#6366f1',
+                        'primary': '#3b82f6', // Blue
+                        'secondary': '#10b981', // Green
+                        'accent': '#6366f1',   // Indigo
                     }
                 }
             }
         }
     </script>
+    <style>
+        /* Print specific styles */
+        @media print {
+            body {
+                font-size: 10pt;
+                background-color: white; /* Ensure white background for printing */
+            }
+            /* Hide elements not needed for printing */
+            .no-print,
+            header, /* Assuming you might add a header */
+            footer, /* Assuming you might add a footer */
+            #departmentManagementSection,
+            #roomManagementSection,
+            #teacherManagementSection,
+            #subjectManagementSection,
+            #manualSchedulingSection,
+            #autoSchedulingSection,
+            #conflictModal, /* Hide modal in print */
+            .container > div > h1 /* Hide main title */
+             {
+                display: none !important; /* Use !important judiciously for overrides */
+            }
+            /* Ensure the schedule area takes full width and is visible */
+            #schedulePrintArea {
+                display: block !important;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                box-shadow: none; /* Remove shadow for print */
+                border: none;
+            }
+             #scheduledExamsList table {
+                width: 100%;
+                border-collapse: collapse; /* Better table borders for print */
+             }
+             #scheduledExamsList th, #scheduledExamsList td {
+                 border: 1px solid #ccc; /* Add simple borders */
+                 padding: 4px 6px;
+             }
+             #scheduledExamsList th {
+                 background-color: #f2f2f2; /* Light grey header for table */
+             }
+             #scheduledExamsList button {
+                 display: none; /* Hide delete buttons in print */
+             }
+             /* Adjust layout */
+             .container {
+                 max-width: 100%;
+                 padding: 0;
+                 margin: 0;
+             }
+             .bg-white { /* Override background if needed */
+                 background-color: white !important;
+             }
+        }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <div class="container mx-auto px-4 py-8 flex-grow">
         <div class="bg-white shadow-xl rounded-lg p-6">
-            <h1 class="text-3xl font-bold text-center mb-8 text-primary">Exam Scheduling Management by:JC</h1>
-            
-            <!-- Subject Management -->
-            <div class="mb-6">
-                <h2 class="text-xl font-semibold mb-4 text-secondary">Subject Management</h2>
-                <div class="grid md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block mb-2 font-medium">Subject Name</label>
-                        <input type="text" id="subjectName" class="w-full p-2 border rounded">
-                    </div>
-                    <div>
-                        <label class="block mb-2 font-medium">Department</label>
-                        <select id="subjectDepartment" class="w-full p-2 border rounded">
-                            <option value="">Select Department</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block mb-2 font-medium">Exam Duration (minutes)</label>
-                        <input type="number" id="subjectDuration" class="w-full p-2 border rounded" min="30" max="180">
-                    </div>
-                    <div class="flex items-end">
-                        <button onclick="addSubject()" class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                            Add Subject
-                        </button>
-                    </div>
-                </div>
-                <div id="subjectList" class="mt-4 grid md:grid-cols-3 gap-2"></div>
-            </div>
+            <h1 class="text-3xl font-bold text-center mb-8 text-primary">Advanced Exam Scheduling Management</h1>
 
-            
-            
-<!-- Department Management -->
-            <div class="mb-6">
+            <div id="departmentManagementSection" class="mb-6 no-print">
                 <h2 class="text-xl font-semibold mb-4 text-secondary">Department Management</h2>
                 <div class="grid md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block mb-2 font-medium">Department Name</label>
+                        <label for="departmentName" class="block mb-2 font-medium">Department Name</label>
                         <input type="text" id="departmentName" class="w-full p-2 border rounded">
                     </div>
                     <div>
-                        <label class="block mb-2 font-medium">Room Limit</label>
+                        <label for="departmentRoomLimit" class="block mb-2 font-medium">Room Limit</label>
                         <input type="number" id="departmentRoomLimit" class="w-full p-2 border rounded" min="1">
                     </div>
                     <div class="flex items-end">
@@ -75,18 +100,17 @@
                 <div id="departmentList" class="mt-4 grid md:grid-cols-3 gap-2"></div>
             </div>
 
-            <!-- Room Management -->
-            <div class="mb-6">
+            <div id="roomManagementSection" class="mb-6 no-print">
                 <h2 class="text-xl font-semibold mb-4 text-secondary">Room Management</h2>
                 <div class="grid md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block mb-2 font-medium">Department</label>
+                        <label for="roomDepartment" class="block mb-2 font-medium">Department</label>
                         <select id="roomDepartment" class="w-full p-2 border rounded">
                             <option value="">Select Department</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block mb-2 font-medium">Room Number</label>
+                        <label for="roomNumber" class="block mb-2 font-medium">Room Number</label>
                         <input type="text" id="roomNumber" class="w-full p-2 border rounded">
                     </div>
                     <div class="flex items-end">
@@ -98,16 +122,15 @@
                 <div id="roomList" class="mt-4 grid md:grid-cols-3 gap-2"></div>
             </div>
 
-            <!-- Teacher Management -->
-            <div class="mb-6">
+            <div id="teacherManagementSection" class="mb-6 no-print">
                 <h2 class="text-xl font-semibold mb-4 text-secondary">Teacher Management</h2>
                 <div class="grid md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block mb-2 font-medium">Teacher Name</label>
+                        <label for="teacherName" class="block mb-2 font-medium">Teacher Name</label>
                         <input type="text" id="teacherName" class="w-full p-2 border rounded">
                     </div>
                     <div>
-                        <label class="block mb-2 font-medium">Department</label>
+                        <label for="teacherDepartment" class="block mb-2 font-medium">Department</label>
                         <select id="teacherDepartment" class="w-full p-2 border rounded">
                             <option value="">Select Department</option>
                         </select>
@@ -120,40 +143,66 @@
                 </div>
                 <div id="teacherList" class="mt-4 grid md:grid-cols-3 gap-2"></div>
             </div>
-            <!-- Advanced Exam Scheduling -->
-            <div>
-                <h2 class="text-xl font-semibold mb-4 text-secondary">Advanced Exam Scheduling</h2>
+
+            <div id="subjectManagementSection" class="mb-6 no-print">
+                <h2 class="text-xl font-semibold mb-4 text-secondary">Subject Management</h2>
                 <div class="grid md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block mb-2 font-medium">Department</label>
+                        <label for="subjectName" class="block mb-2 font-medium">Subject Name</label>
+                        <input type="text" id="subjectName" class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label for="subjectDepartment" class="block mb-2 font-medium">Department</label>
+                        <select id="subjectDepartment" class="w-full p-2 border rounded">
+                            <option value="">Select Department</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="subjectDuration" class="block mb-2 font-medium">Exam Duration (minutes)</label>
+                        <input type="number" id="subjectDuration" class="w-full p-2 border rounded" min="30" max="180">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="addSubject()" class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                            Add Subject
+                        </button>
+                    </div>
+                </div>
+                <div id="subjectList" class="mt-4 grid md:grid-cols-3 gap-2"></div>
+            </div>
+
+            <div id="manualSchedulingSection" class="mb-6 no-print">
+                <h2 class="text-xl font-semibold mb-4 text-secondary">Manual Exam Scheduling</h2>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="scheduleDepartment" class="block mb-2 font-medium">Department</label>
                         <select id="scheduleDepartment" class="w-full p-2 border rounded" onchange="updateRoomsAndSubjects()">
                             <option value="">Select Department</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block mb-2 font-medium">Room</label>
+                        <label for="scheduleRoom" class="block mb-2 font-medium">Room</label>
                         <select id="scheduleRoom" class="w-full p-2 border rounded">
                             <option value="">Select Room</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block mb-2 font-medium">Subject</label>
+                        <label for="scheduleSubject" class="block mb-2 font-medium">Subject</label>
                         <select id="scheduleSubject" class="w-full p-2 border rounded">
                             <option value="">Select Subject</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block mb-2 font-medium">Teacher</label>
+                        <label for="scheduleTeacher" class="block mb-2 font-medium">Teacher</label>
                         <select id="scheduleTeacher" class="w-full p-2 border rounded">
                             <option value="">Select Teacher</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block mb-2 font-medium">Exam Date</label>
+                        <label for="scheduleDate" class="block mb-2 font-medium">Exam Date</label>
                         <input type="date" id="scheduleDate" class="w-full p-2 border rounded">
                     </div>
                     <div>
-                        <label class="block mb-2 font-medium">Start Time</label>
+                        <label for="scheduleStartTime" class="block mb-2 font-medium">Start Time</label>
                         <input type="time" id="scheduleStartTime" class="w-full p-2 border rounded">
                     </div>
                     <div class="col-span-full flex justify-center">
@@ -164,9 +213,27 @@
                 </div>
             </div>
 
-            <!-- Scheduled Exams -->
-            <div class="mt-8">
-                <h2 class="text-xl font-semibold mb-4 text-secondary">Scheduled Exams</h2>
+            <div id="autoSchedulingSection" class="mb-8 no-print">
+                 <h2 class="text-xl font-semibold mb-4 text-accent">Auto Scheduling</h2>
+                 <div class="flex items-end gap-4">
+                    <div>
+                        <label for="autoScheduleCount" class="block mb-2 font-medium">Number of Exams to Auto-Schedule</label>
+                        <input type="number" id="autoScheduleCount" class="w-full p-2 border rounded" min="1" value="5">
+                    </div>
+                    <button onclick="autoScheduleExams()" class="bg-accent text-white px-6 py-2 rounded hover:bg-indigo-700 transition">
+                        Auto-Schedule
+                    </button>
+                 </div>
+            </div>
+
+
+            <div id="schedulePrintArea" class="mt-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-secondary">Scheduled Exams</h2>
+                    <button onclick="printSchedule()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition no-print">
+                        Print Schedule
+                    </button>
+                </div>
                 <div id="scheduledExamsList" class="overflow-x-auto">
                     <table class="w-full bg-white shadow rounded">
                         <thead class="bg-gray-100">
@@ -177,8 +244,7 @@
                                 <th class="p-3 text-left">Teacher</th>
                                 <th class="p-3 text-left">Date</th>
                                 <th class="p-3 text-left">Time</th>
-                                <th class="p-3 text-left">Actions</th>
-                            </tr>
+                                <th class="p-3 text-left no-print">Actions</th> </tr>
                         </thead>
                         <tbody id="scheduledExamsBody"></tbody>
                     </table>
@@ -187,8 +253,7 @@
         </div>
     </div>
 
-    <!-- Modal for Conflict Warning -->
-    <div id="conflictModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div id="conflictModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 no-print">
         <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
             <h2 class="text-xl font-bold text-red-600 mb-4">Scheduling Conflict</h2>
             <p id="conflictMessage" class="mb-6"></p>
@@ -201,569 +266,880 @@
     </div>
 
     <script>
-// Data Management
-function initializeStorage() {
-    const storageItems = [
-        'departments', 'rooms', 'teachers', 
-        'subjects', 'scheduledExams'
-    ];
+    // --- Constants for Auto-Scheduling ---
+    const AUTO_SCHEDULE_START_HOUR = 8; // 8 AM
+    const AUTO_SCHEDULE_END_HOUR = 17; // 5 PM (scheduling ends *before* 5 PM)
+    const AUTO_SCHEDULE_MAX_DAYS_AHEAD = 30; // Look max 30 days into the future
+    const AUTO_SCHEDULE_TIME_INCREMENT_MINUTES = 15; // Check slots every 15 mins
 
-    storageItems.forEach(item => {
-        if (!localStorage.getItem(item)) {
-            localStorage.setItem(item, JSON.stringify([]));
+    // Data Management (initializeStorage, getData, saveData)
+    function initializeStorage() {
+        const storageItems = [
+            'departments', 'rooms', 'teachers',
+            'subjects', 'scheduledExams'
+        ];
+
+        storageItems.forEach(item => {
+            if (!localStorage.getItem(item)) {
+                localStorage.setItem(item, JSON.stringify([]));
+            }
+        });
+    }
+    function getData(key) {
+        // Defensive parsing: return empty array if parsing fails
+        try {
+            return JSON.parse(localStorage.getItem(key)) || [];
+        } catch (e) {
+            console.error(`Error parsing localStorage item "${key}":`, e);
+            // Optionally clear the corrupted item: localStorage.removeItem(key);
+            return [];
         }
-    });
-}
-
-// Department Management
-function addDepartment() {
-    const departmentName = document.getElementById('departmentName').value.trim();
-    const roomLimit = document.getElementById('departmentRoomLimit').value;
-
-    if (!departmentName || !roomLimit) {
-        alert('Please enter both department name and room limit');
-        return;
+    }
+    function saveData(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
     }
 
-    const departments = JSON.parse(localStorage.getItem('departments'));
-    
-    // Check if department already exists
-    if (departments.some(dept => dept.name === departmentName)) {
-        alert('Department already exists');
-        return;
+    // --- Utility: Shuffle Array (Fisher-Yates Algorithm) ---
+    function shuffleArray(array) {
+        let currentIndex = array.length, randomIndex;
+        // While there remain elements to shuffle.
+        while (currentIndex > 0) {
+            // Pick a remaining element.
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+        }
+        return array;
     }
 
-    departments.push({ name: departmentName, roomLimit: parseInt(roomLimit) });
-    localStorage.setItem('departments', JSON.stringify(departments));
-    
-    // Clear input fields
-    document.getElementById('departmentName').value = '';
-    document.getElementById('departmentRoomLimit').value = '';
 
-    // Refresh department lists
-    renderDepartments();
-    updateDepartmentDropdowns();
-}
+    // --- Department Management ---
+    function addDepartment() {
+        const nameInput = document.getElementById('departmentName');
+        const limitInput = document.getElementById('departmentRoomLimit');
+        const departmentName = nameInput.value.trim();
+        const roomLimit = limitInput.value;
 
-function renderDepartments() {
-    const departments = JSON.parse(localStorage.getItem('departments'));
-    const departmentList = document.getElementById('departmentList');
-    departmentList.innerHTML = '';
+        if (!departmentName || !roomLimit || parseInt(roomLimit) < 1) {
+            alert('Please enter a valid department name and room limit (>= 1)');
+            return;
+        }
 
-    departments.forEach((dept, index) => {
-        const departmentDiv = document.createElement('div');
-        departmentDiv.className = 'bg-gray-100 p-3 rounded flex justify-between items-center';
-        departmentDiv.innerHTML = `
-            <span>${dept.name} (Limit: ${dept.roomLimit})</span>
-            <button onclick="removeDepartment(${index})" class="text-red-500 hover:text-red-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-            </button>
-        `;
-        departmentList.appendChild(departmentDiv);
-    });
-}
+        const departments = getData('departments');
+        if (departments.some(dept => dept.name.toLowerCase() === departmentName.toLowerCase())) {
+            alert('Department already exists');
+            return;
+        }
 
-function removeDepartment(index) {
-    const departments = JSON.parse(localStorage.getItem('departments'));
-    const removedDepartment = departments[index].name;
+        departments.push({ name: departmentName, roomLimit: parseInt(roomLimit) });
+        saveData('departments', departments);
 
-    // Remove associated rooms, teachers, and subjects
-    let rooms = JSON.parse(localStorage.getItem('rooms'));
-    rooms = rooms.filter(room => room.department !== removedDepartment);
-    localStorage.setItem('rooms', JSON.stringify(rooms));
-
-    let teachers = JSON.parse(localStorage.getItem('teachers'));
-    teachers = teachers.filter(teacher => teacher.department !== removedDepartment);
-    localStorage.setItem('teachers', JSON.stringify(teachers));
-
-    let subjects = JSON.parse(localStorage.getItem('subjects'));
-    subjects = subjects.filter(subject => subject.department !== removedDepartment);
-    localStorage.setItem('subjects', JSON.stringify(subjects));
-
-    // Remove scheduled exams for this department
-    let scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
-    scheduledExams = scheduledExams.filter(exam => exam.department !== removedDepartment);
-    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
-
-    // Remove department
-    departments.splice(index, 1);
-    localStorage.setItem('departments', JSON.stringify(departments));
-
-    // Refresh lists
-    renderDepartments();
-    updateDepartmentDropdowns();
-    renderRooms();
-    renderTeachers();
-    renderSubjects();
-    renderScheduledExams();
-}
-
-// Room Management
-function addRoom() {
-    const department = document.getElementById('roomDepartment').value;
-    const roomNumber = document.getElementById('roomNumber').value.trim();
-
-    if (!department || !roomNumber) {
-        alert('Please select a department and enter a room number');
-        return;
+        nameInput.value = '';
+        limitInput.value = '';
+        renderDepartments();
+        updateDepartmentDropdowns();
     }
-
-    const rooms = JSON.parse(localStorage.getItem('rooms'));
-    
-    // Check if room already exists
-    if (rooms.some(room => room.number === roomNumber && room.department === department)) {
-        alert('Room already exists in this department');
-        return;
+    function renderDepartments() {
+        const departments = getData('departments');
+        const listElement = document.getElementById('departmentList');
+        listElement.innerHTML = '';
+        departments.forEach((dept, index) => {
+            listElement.appendChild(createListItem(
+                `${dept.name} (Limit: ${dept.roomLimit})`,
+                () => removeDepartment(index)
+            ));
+        });
     }
+    function removeDepartment(index) {
+        if (!confirm('Are you sure you want to delete this department? This will also remove associated rooms, teachers, subjects, and scheduled exams.')) {
+            return;
+        }
+        const departments = getData('departments');
+        const removedDepartmentName = departments[index]?.name; // Use optional chaining
+        if (!removedDepartmentName) return; // Safety check
 
-    // Check department room limit
-    const departmentsData = JSON.parse(localStorage.getItem('departments'));
-    const departmentData = departmentsData.find(dept => dept.name === department);
-    const departmentRooms = rooms.filter(room => room.department === department);
-    
-    if (departmentRooms.length >= departmentData.roomLimit) {
-        alert(`Room limit for ${department} department has been reached`);
-        return;
-    }
+        departments.splice(index, 1);
+        saveData('departments', departments);
 
-    rooms.push({ number: roomNumber, department });
-    localStorage.setItem('rooms', JSON.stringify(rooms));
-    
-    // Clear input fields
-    document.getElementById('roomNumber').value = '';
-
-    // Refresh room lists
-    renderRooms();
-}
-
-function renderRooms() {
-    const rooms = JSON.parse(localStorage.getItem('rooms'));
-    const roomList = document.getElementById('roomList');
-    roomList.innerHTML = '';
-
-    rooms.forEach((room, index) => {
-        const roomDiv = document.createElement('div');
-        roomDiv.className = 'bg-gray-100 p-3 rounded flex justify-between items-center';
-        roomDiv.innerHTML = `
-            <span>${room.number} (${room.department})</span>
-            <button onclick="removeRoom(${index})" class="text-red-500 hover:text-red-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-            </button>
-        `;
-        roomList.appendChild(roomDiv);
-    });
-}
-
-function removeRoom(index) {
-    const rooms = JSON.parse(localStorage.getItem('rooms'));
-    const removedRoom = rooms[index];
-
-    // Remove scheduled exams for this room
-    let scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
-    scheduledExams = scheduledExams.filter(exam => 
-        exam.room !== removedRoom.number || exam.department !== removedRoom.department
-    );
-    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
-
-    // Remove room
-    rooms.splice(index, 1);
-    localStorage.setItem('rooms', JSON.stringify(rooms));
-
-    // Refresh lists
-    renderRooms();
-    renderScheduledExams();
-}
-
-// Teacher Management
-function addTeacher() {
-    const teacherName = document.getElementById('teacherName').value.trim();
-    const department = document.getElementById('teacherDepartment').value;
-
-    if (!teacherName || !department) {
-        alert('Please enter teacher name and select a department');
-        return;
-    }
-
-    const teachers = JSON.parse(localStorage.getItem('teachers'));
-    
-    // Check if teacher already exists
-    if (teachers.some(teacher => teacher.name === teacherName && teacher.department === department)) {
-        alert('Teacher already exists in this department');
-        return;
-    }
-
-    teachers.push({ name: teacherName, department });
-    localStorage.setItem('teachers', JSON.stringify(teachers));
-    
-    // Clear input fields
-    document.getElementById('teacherName').value = '';
-
-    // Refresh teacher lists
-    renderTeachers();
-}
-
-function renderTeachers() {
-    const teachers = JSON.parse(localStorage.getItem('teachers'));
-    const teacherList = document.getElementById('teacherList');
-    teacherList.innerHTML = '';
-
-    teachers.forEach((teacher, index) => {
-        const teacherDiv = document.createElement('div');
-        teacherDiv.className = 'bg-gray-100 p-3 rounded flex justify-between items-center';
-        teacherDiv.innerHTML = `
-            <span>${teacher.name} (${teacher.department})</span>
-            <button onclick="removeTeacher(${index})" class="text-red-500 hover:text-red-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-            </button>
-        `;
-        teacherList.appendChild(teacherDiv);
-    });
-}
-
-function removeTeacher(index) {
-    const teachers = JSON.parse(localStorage.getItem('teachers'));
-    const removedTeacher = teachers[index];
-
-    // Remove scheduled exams for this teacher
-    let scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
-    scheduledExams = scheduledExams.filter(exam => 
-        exam.teacher !== removedTeacher.name || exam.department !== removedTeacher.department
-    );
-    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
-
-    // Remove teacher
-    teachers.splice(index, 1);
-    localStorage.setItem('teachers', JSON.stringify(teachers));
-
-    // Refresh lists
-    renderTeachers();
-    renderScheduledExams();
-}
-
-// Subject Management
-function addSubject() {
-    const subjectName = document.getElementById('subjectName').value.trim();
-    const department = document.getElementById('subjectDepartment').value;
-    const duration = document.getElementById('subjectDuration').value;
-
-    if (!subjectName || !department || !duration) {
-        alert('Please fill in all subject details');
-        return;
-    }
-
-    const subjects = JSON.parse(localStorage.getItem('subjects'));
-    
-    // Check if subject already exists
-    if (subjects.some(subject => 
-        subject.name === subjectName && 
-        subject.department === department
-    )) {
-        alert('Subject already exists in this department');
-        return;
-    }
-
-    subjects.push({ 
-        name: subjectName, 
-        department, 
-        duration: parseInt(duration) 
-    });
-    localStorage.setItem('subjects', JSON.stringify(subjects));
-    
-    // Clear input fields
-    document.getElementById('subjectName').value = '';
-    document.getElementById('subjectDuration').value = '';
-
-    // Refresh subject lists
-    renderSubjects();
-}
-
-function renderSubjects() {
-    const subjects = JSON.parse(localStorage.getItem('subjects'));
-    const subjectList = document.getElementById('subjectList');
-    subjectList.innerHTML = '';
-
-    subjects.forEach((subject, index) => {
-        const subjectDiv = document.createElement('div');
-        subjectDiv.className = 'bg-gray-100 p-3 rounded flex justify-between items-center';
-        subjectDiv.innerHTML = `
-            <span>${subject.name} (${subject.department}) - ${subject.duration} mins</span>
-            <button onclick="removeSubject(${index})" class="text-red-500 hover:text-red-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-            </button>
-        `;
-        subjectList.appendChild(subjectDiv);
-    });
-
-    // Update department dropdowns
-    updateDepartmentDropdowns();
-}
-
-function removeSubject(index) {
-    const subjects = JSON.parse(localStorage.getItem('subjects'));
-    const removedSubject = subjects[index];
-
-    // Remove scheduled exams for this subject
-    let scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
-    scheduledExams = scheduledExams.filter(exam => 
-        exam.subject !== removedSubject.name || 
-        exam.department !== removedSubject.department
-    );
-    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
-
-    // Remove subject
-    subjects.splice(index, 1);
-    localStorage.setItem('subjects', JSON.stringify(subjects));
-
-    // Refresh lists
-    renderSubjects();
-    renderScheduledExams();
-}
-
-// Exam Scheduling Utility Functions
-function updateDepartmentDropdowns() {
-    const departments = JSON.parse(localStorage.getItem('departments'));
-    const departmentDropdowns = [
-        document.getElementById('roomDepartment'),
-        document.getElementById('teacherDepartment'),
-        document.getElementById('subjectDepartment'),
-        document.getElementById('scheduleDepartment')
-    ];
-
-    departmentDropdowns.forEach(dropdown => {
-        const currentValue = dropdown.value;
-        dropdown.innerHTML = '<option value="">Select Department</option>';
-        
-        departments.forEach(dept => {
-            const option = document.createElement('option');
-            option.value = dept.name;
-            option.textContent = dept.name;
-            dropdown.appendChild(option);
+        // Cascade delete
+        ['rooms', 'teachers', 'subjects', 'scheduledExams'].forEach(key => {
+            let items = getData(key);
+            items = items.filter(item => item.department !== removedDepartmentName);
+            saveData(key, items);
         });
 
-        // Preserve selected value if it still exists
-        if (currentValue && departments.some(dept => dept.name === currentValue)) {
-            dropdown.value = currentValue;
-        }
-    });
-}
-
-function updateRoomsAndSubjects() {
-    const department = document.getElementById('scheduleDepartment').value;
-    
-    // Update Rooms Dropdown
-    const roomDropdown = document.getElementById('scheduleRoom');
-    const rooms = JSON.parse(localStorage.getItem('rooms'));
-    
-    // Clear existing options
-    roomDropdown.innerHTML = '<option value="">Select Room</option>';
-
-    // Filter rooms by selected department
-    const departmentRooms = rooms.filter(room => room.department === department);
-    
-    departmentRooms.forEach(room => {
-        const option = document.createElement('option');
-        option.value = room.number;
-        option.textContent = room.number;
-        roomDropdown.appendChild(option);
-    });
-
-    // Update Subjects Dropdown
-    const subjectDropdown = document.getElementById('scheduleSubject');
-    const subjects = JSON.parse(localStorage.getItem('subjects'));
-    
-    // Clear existing options
-    subjectDropdown.innerHTML = '<option value="">Select Subject</option>';
-
-    // Filter subjects by selected department
-    const departmentSubjects = subjects.filter(subject => subject.department === department);
-    
-    departmentSubjects.forEach(subject => {
-        const option = document.createElement('option');
-        option.value = subject.name;
-        option.textContent = `${subject.name} (${subject.duration} mins)`;
-        subjectDropdown.appendChild(option);
-    });
-
-    // Update teacher dropdown
-    updateTeachers(department);
-}
-
-function updateTeachers(department) {
-    const teacherDropdown = document.getElementById('scheduleTeacher');
-    const teachers = JSON.parse(localStorage.getItem('teachers'));
-    
-    // Clear existing options
-    teacherDropdown.innerHTML = '<option value="">Select Teacher</option>';
-
-    // Filter teachers by selected department
-    const departmentTeachers = teachers.filter(teacher => teacher.department === department);
-    
-    departmentTeachers.forEach(teacher => {
-        const option = document.createElement('option');
-        option.value = teacher.name;
-        option.textContent = teacher.name;
-        teacherDropdown.appendChild(option);
-    });
-}
-
-function isTimeOverlap(existingStart, existingEnd, newStart, newEnd) {
-    // Convert times to minutes since midnight
-    const convertToMinutes = (time) => {
-        const [hours, minutes] = time.split(':').map(Number);
-        return hours * 60 + minutes;
-    };
-
-    const existingStartMinutes = convertToMinutes(existingStart);
-    const existingEndMinutes = convertToMinutes(existingEnd);
-    const newStartMinutes = convertToMinutes(newStart);
-    const newEndMinutes = convertToMinutes(newEnd);
-
-    // Check for overlap
-    return !(newEndMinutes <= existingStartMinutes || newStartMinutes >= existingEndMinutes);
-}
-
-function scheduleExam() {
-    const department = document.getElementById('scheduleDepartment').value;
-    const room = document.getElementById('scheduleRoom').value;
-    const subject = document.getElementById('scheduleSubject').value;
-    const teacher = document.getElementById('scheduleTeacher').value;
-    const date = document.getElementById('scheduleDate').value;
-    const startTime = document.getElementById('scheduleStartTime').value;
-
-    // Validate inputs
-    if (!department || !room || !subject || !teacher || !date || !startTime) {
-        alert('Please fill in all scheduling details');
-        return;
+        renderAll();
+        updateDepartmentDropdowns(); // Re-populate dropdowns
+        clearSchedulingFieldsIfNeeded(removedDepartmentName);
     }
 
-    // Get subject duration
-    const subjects = JSON.parse(localStorage.getItem('subjects'));
-    const selectedSubject = subjects.find(s => s.name === subject);
-    const duration = selectedSubject.duration;
+    // --- Room Management ---
+    function addRoom() {
+        const departmentSelect = document.getElementById('roomDepartment');
+        const numberInput = document.getElementById('roomNumber');
+        const department = departmentSelect.value;
+        const roomNumber = numberInput.value.trim();
 
-    // Calculate end time based on duration
-    const startDateTime = new Date(`${date}T${startTime}`);
-    const endDateTime = new Date(startDateTime.getTime() + duration * 60000);
-    const endTime = endDateTime.toTimeString().slice(0,5);
+        if (!department || !roomNumber) {
+            alert('Please select a department and enter a room number');
+            return;
+        }
 
-    // Check for scheduling conflicts
-    const scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
-    
-    // Check room conflict
-    const roomConflict = scheduledExams.find(exam => 
-        exam.room === room && 
-        exam.date === date && 
-        isTimeOverlap(exam.startTime, exam.endTime, startTime, endTime)
-    );
+        const rooms = getData('rooms');
+        if (rooms.some(room => room.department === department && room.number.toLowerCase() === roomNumber.toLowerCase())) {
+            alert(`Room "${roomNumber}" already exists in the ${department} department.`);
+            return;
+        }
 
-    // Check teacher conflict
-    const teacherConflict = scheduledExams.find(exam => 
-        exam.teacher === teacher && 
-        exam.date === date && 
-        isTimeOverlap(exam.startTime, exam.endTime, startTime, endTime)
-    );
+        const departmentData = getData('departments').find(dept => dept.name === department);
+        const departmentRoomsCount = rooms.filter(room => room.department === department).length;
+        if (!departmentData) {
+             alert(`Selected department "${department}" not found.`); // Defensive check
+             return;
+        }
+        if (departmentRoomsCount >= departmentData.roomLimit) {
+            alert(`Room limit (${departmentData.roomLimit}) for the ${department} department has been reached.`);
+            return;
+        }
 
-    // Show conflict modal if conflict exists
-    if (roomConflict || teacherConflict) {
+        rooms.push({ number: roomNumber, department });
+        saveData('rooms', rooms);
+
+        numberInput.value = '';
+        departmentSelect.value = ''; // Reset dropdown
+        renderRooms();
+        if (document.getElementById('scheduleDepartment').value === department) {
+             updateRoomsAndSubjects(); // Update schedule dropdown if relevant
+        }
+    }
+    function renderRooms() {
+        const rooms = getData('rooms');
+        const listElement = document.getElementById('roomList');
+        listElement.innerHTML = '';
+        rooms.forEach((room, index) => {
+            listElement.appendChild(createListItem(
+                `${room.number} (${room.department})`,
+                () => removeRoom(index)
+            ));
+        });
+    }
+    function removeRoom(index) {
+         if (!confirm('Are you sure you want to delete this room? This will also remove scheduled exams in this room.')) {
+            return;
+        }
+        const rooms = getData('rooms');
+        const removedRoom = rooms[index];
+        if (!removedRoom) return; // Safety check
+
+        rooms.splice(index, 1);
+        saveData('rooms', rooms);
+
+        let scheduledExams = getData('scheduledExams');
+        scheduledExams = scheduledExams.filter(exam => !(exam.department === removedRoom.department && exam.room === removedRoom.number));
+        saveData('scheduledExams', scheduledExams);
+
+        renderRooms();
+        renderScheduledExams();
+        if (document.getElementById('scheduleDepartment').value === removedRoom.department) {
+            updateRoomsAndSubjects();
+        }
+        clearSchedulingFieldsIfNeeded(null, removedRoom.number);
+    }
+
+    // --- Teacher Management ---
+    function addTeacher() {
+        const nameInput = document.getElementById('teacherName');
+        const departmentSelect = document.getElementById('teacherDepartment');
+        const teacherName = nameInput.value.trim();
+        const department = departmentSelect.value;
+
+        if (!teacherName || !department) {
+            alert('Please enter teacher name and select a department');
+            return;
+        }
+
+        const teachers = getData('teachers');
+        if (teachers.some(t => t.department === department && t.name.toLowerCase() === teacherName.toLowerCase())) {
+            alert(`Teacher "${teacherName}" already exists in the ${department} department.`);
+            return;
+        }
+
+        teachers.push({ name: teacherName, department });
+        saveData('teachers', teachers);
+
+        nameInput.value = '';
+        departmentSelect.value = ''; // Reset dropdown
+        renderTeachers();
+        if (document.getElementById('scheduleDepartment').value === department) {
+             updateRoomsAndSubjects(); // Update schedule dropdown if relevant
+        }
+    }
+    function renderTeachers() {
+        const teachers = getData('teachers');
+        const listElement = document.getElementById('teacherList');
+        listElement.innerHTML = '';
+        teachers.forEach((teacher, index) => {
+            listElement.appendChild(createListItem(
+                `${teacher.name} (${teacher.department})`,
+                () => removeTeacher(index)
+            ));
+        });
+    }
+    function removeTeacher(index) {
+        if (!confirm('Are you sure you want to delete this teacher? This will also remove scheduled exams assigned to this teacher.')) {
+            return;
+        }
+        const teachers = getData('teachers');
+        const removedTeacher = teachers[index];
+        if (!removedTeacher) return; // Safety check
+
+        teachers.splice(index, 1);
+        saveData('teachers', teachers);
+
+        let scheduledExams = getData('scheduledExams');
+        scheduledExams = scheduledExams.filter(exam => !(exam.department === removedTeacher.department && exam.teacher === removedTeacher.name));
+        saveData('scheduledExams', scheduledExams);
+
+        renderTeachers();
+        renderScheduledExams();
+        if (document.getElementById('scheduleDepartment').value === removedTeacher.department) {
+            updateRoomsAndSubjects();
+        }
+        clearSchedulingFieldsIfNeeded(null, null, null, removedTeacher.name);
+    }
+
+    // --- Subject Management ---
+     function addSubject() {
+        const nameInput = document.getElementById('subjectName');
+        const departmentSelect = document.getElementById('subjectDepartment');
+        const durationInput = document.getElementById('subjectDuration');
+        const subjectName = nameInput.value.trim();
+        const department = departmentSelect.value;
+        const duration = durationInput.value;
+
+        if (!subjectName || !department || !duration || parseInt(duration) < 30 || parseInt(duration) > 180) {
+            alert('Please fill in all subject details with a valid duration (30-180 minutes)');
+            return;
+        }
+
+        const subjects = getData('subjects');
+        if (subjects.some(s => s.department === department && s.name.toLowerCase() === subjectName.toLowerCase())) {
+            alert(`Subject "${subjectName}" already exists in the ${department} department.`);
+            return;
+        }
+
+        subjects.push({ name: subjectName, department, duration: parseInt(duration) });
+        saveData('subjects', subjects);
+
+        nameInput.value = '';
+        durationInput.value = '';
+        departmentSelect.value = ''; // Reset dropdown
+        renderSubjects();
+        if (document.getElementById('scheduleDepartment').value === department) {
+            updateRoomsAndSubjects(); // Update schedule dropdown if relevant
+        }
+    }
+    function renderSubjects() {
+        const subjects = getData('subjects');
+        const listElement = document.getElementById('subjectList');
+        listElement.innerHTML = '';
+        subjects.forEach((subject, index) => {
+            listElement.appendChild(createListItem(
+                `${subject.name} (${subject.department}) - ${subject.duration} mins`,
+                () => removeSubject(index)
+            ));
+        });
+    }
+     function removeSubject(index) {
+         if (!confirm('Are you sure you want to delete this subject? This will also remove scheduled exams for this subject.')) {
+            return;
+        }
+        const subjects = getData('subjects');
+        const removedSubject = subjects[index];
+        if (!removedSubject) return; // Safety check
+
+        subjects.splice(index, 1);
+        saveData('subjects', subjects);
+
+        let scheduledExams = getData('scheduledExams');
+        scheduledExams = scheduledExams.filter(exam => !(exam.department === removedSubject.department && exam.subject === removedSubject.name));
+        saveData('scheduledExams', scheduledExams);
+
+        renderSubjects();
+        renderScheduledExams();
+        if (document.getElementById('scheduleDepartment').value === removedSubject.department) {
+            updateRoomsAndSubjects();
+        }
+        clearSchedulingFieldsIfNeeded(null, null, removedSubject.name);
+    }
+
+    // --- Helper for Rendering Lists ---
+     function createListItem(text, removeCallback) {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'bg-gray-100 p-3 rounded flex justify-between items-center';
+        itemDiv.innerHTML = `
+            <span class="truncate mr-2">${text}</span>
+            <button class="text-red-500 hover:text-red-700 flex-shrink-0 no-print">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        `;
+        itemDiv.querySelector('button').onclick = removeCallback;
+        return itemDiv;
+    }
+
+    // --- Exam Scheduling Utility Functions ---
+    function updateDepartmentDropdowns() {
+        const departments = getData('departments');
+        const dropdownIds = [
+            'roomDepartment', 'teacherDepartment', 'subjectDepartment', 'scheduleDepartment'
+        ];
+
+        dropdownIds.forEach(id => {
+            const dropdown = document.getElementById(id);
+            if (!dropdown) return;
+            const currentValue = dropdown.value; // Save current selection
+            dropdown.innerHTML = '<option value="">Select Department</option>'; // Clear and add default
+
+            departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.name;
+                option.textContent = dept.name;
+                dropdown.appendChild(option);
+            });
+
+            // Try to restore previous selection if it's still valid
+            if (currentValue && departments.some(dept => dept.name === currentValue)) {
+                dropdown.value = currentValue;
+            } else if (id === 'scheduleDepartment') {
+                 // If the previously selected schedule department was removed, clear dependent dropdowns
+                 updateRoomsAndSubjects(); // This will repopulate based on the new (or empty) selection
+            }
+        });
+    }
+
+    function updateRoomsAndSubjects() {
+        const department = document.getElementById('scheduleDepartment').value;
+        const rooms = getData('rooms');
+        const subjects = getData('subjects');
+        const teachers = getData('teachers');
+
+        const roomDropdown = document.getElementById('scheduleRoom');
+        const subjectDropdown = document.getElementById('scheduleSubject');
+        const teacherDropdown = document.getElementById('scheduleTeacher');
+
+        // Filter items based on the selected department
+        const filteredRooms = department ? rooms.filter(r => r.department === department) : [];
+        const filteredSubjects = department ? subjects.filter(s => s.department === department) : [];
+        const filteredTeachers = department ? teachers.filter(t => t.department === department) : [];
+
+        // Populate dropdowns
+        populateDropdown(roomDropdown, filteredRooms, 'Select Room', item => item.number, item => item.number);
+        populateDropdown(subjectDropdown, filteredSubjects, 'Select Subject', item => item.name, item => `${item.name} (${item.duration} mins)`);
+        populateDropdown(teacherDropdown, filteredTeachers, 'Select Teacher', item => item.name, item => item.name);
+    }
+
+    function populateDropdown(dropdown, items, defaultOptionText, valueGetter, textGetter) {
+         const currentValue = dropdown.value; // Preserve selection if possible
+         dropdown.innerHTML = `<option value="">${defaultOptionText}</option>`;
+         items.forEach(item => {
+             const option = document.createElement('option');
+             option.value = valueGetter(item);
+             option.textContent = textGetter(item);
+             dropdown.appendChild(option);
+         });
+         // Restore selection if the item still exists in the filtered list
+         if (currentValue && items.some(item => valueGetter(item) === currentValue)) {
+            dropdown.value = currentValue;
+         }
+    }
+
+    // --- Time Overlap Check (Strict: No overlap, endpoints don't count) ---
+    // Checks if new time range [newStart, newEnd) overlaps with existing [existingStart, existingEnd)
+    function isTimeOverlap(existingStart, existingEnd, newStart, newEnd) {
+        // Convert HH:MM to minutes since midnight for comparison
+        const toMinutes = time => {
+            const [hours, minutes] = time.split(':').map(Number);
+            return hours * 60 + minutes;
+        };
+
+        const existingStartMin = toMinutes(existingStart);
+        const existingEndMin = toMinutes(existingEnd); // End time is exclusive for check
+        const newStartMin = toMinutes(newStart);
+        const newEndMin = toMinutes(newEnd);           // End time is exclusive for check
+
+        // Overlap occurs if the start of one interval is before the end of the other,
+        // AND the end of the first interval is after the start of the second.
+        // Read as: New Starts Before Existing Ends AND New Ends After Existing Starts
+        const overlap = newStartMin < existingEndMin && newEndMin > existingStartMin;
+
+        return overlap;
+        // Original logic: return !(newEndMin <= existingStartMin || newStartMin >= existingEndMin);
+        // The original logic correctly identifies overlap including touching endpoints.
+        // The new logic 'overlap' is perhaps slightly clearer and achieves the same for strict non-touching overlap check.
+        // Let's stick to the original logic as it is standard and correct for detecting *any* overlap.
+        // Reverting to original check:
+        // return !(newEndMin <= existingStartMin || newStartMin >= existingEndMin);
+   }
+
+   // --- Calculate End Time Helper ---
+   function calculateEndTime(date, startTime, durationMinutes) {
+        try {
+            const startDateTime = new Date(`${date}T${startTime}`);
+            // Check if date parsing was successful
+            if (isNaN(startDateTime.getTime())) {
+                throw new Error(`Invalid date/time format: ${date}T${startTime}`);
+            }
+            const endDateTime = new Date(startDateTime.getTime() + durationMinutes * 60000);
+            // Check if end time calculation resulted in a valid date
+             if (isNaN(endDateTime.getTime())) {
+                throw new Error(`Invalid end time calculation from ${startTime} + ${durationMinutes} mins`);
+            }
+            // Format endTime as HH:MM (ensure leading zeros)
+            const hours = String(endDateTime.getHours()).padStart(2, '0');
+            const minutes = String(endDateTime.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        } catch (e) {
+            console.error("Error calculating end time:", e);
+            return null; // Indicate failure
+        }
+   }
+
+    // --- Conflict Checking Helper (used by both manual and auto) ---
+    // Checks a potential new exam against a list of existing exams
+    function hasConflict(newExamDetails, existingExams) {
+        const { department, room, teacher, date, startTime, duration } = newExamDetails;
+        const endTime = calculateEndTime(date, startTime, duration);
+
+        if (!endTime) return { conflict: true, message: "Error calculating exam end time." }; // Calculation failed
+
+        let conflictMsg = '';
+        for (const exam of existingExams) {
+            // Room Conflict Check
+            if (exam.department === department && exam.room === room && exam.date === date) {
+                if (isTimeOverlap(exam.startTime, exam.endTime, startTime, endTime)) {
+                    conflictMsg += `Room Conflict: Room "${room}" in ${department} is busy on ${date} during ${startTime} - ${endTime} (Existing: ${exam.subject} ${exam.startTime}-${exam.endTime}).\n`;
+                    // return { conflict: true, message: `Room Conflict: Room "${room}" in ${department} is busy on ${date} during ${startTime} - ${endTime}.` };
+                }
+            }
+
+            // Teacher Conflict Check (Teachers can only be in one place at a time, regardless of dept for this check)
+            // Note: Previous logic checked department match too, assuming teachers only teach in their dept.
+            // Let's assume a teacher conflict is universal for that time slot.
+             if (exam.teacher === teacher && exam.date === date) {
+                 if (isTimeOverlap(exam.startTime, exam.endTime, startTime, endTime)) {
+                     conflictMsg += `Teacher Conflict: Teacher "${teacher}" is busy on ${date} during ${startTime} - ${endTime} (Existing: ${exam.subject} in ${exam.department}, Room ${exam.room} ${exam.startTime}-${exam.endTime}).\n`;
+                     // return { conflict: true, message: `Teacher Conflict: Teacher "${teacher}" is busy on ${date} during ${startTime} - ${endTime}.` };
+                 }
+             }
+        }
+
+        return { conflict: conflictMsg.length > 0, message: conflictMsg.trim() };
+    }
+
+
+    // --- Manual Exam Scheduling ---
+     function scheduleExam() {
+        const department = document.getElementById('scheduleDepartment').value;
+        const room = document.getElementById('scheduleRoom').value;
+        const subjectName = document.getElementById('scheduleSubject').value;
+        const teacher = document.getElementById('scheduleTeacher').value;
+        const date = document.getElementById('scheduleDate').value;
+        const startTime = document.getElementById('scheduleStartTime').value;
+
+         if (!department || !room || !subjectName || !teacher || !date || !startTime) {
+            alert('Please fill in all scheduling details');
+            return; // Indicate failure (or simply don't proceed)
+        }
+
+        const subjects = getData('subjects');
+        const selectedSubject = subjects.find(s => s.department === department && s.name === subjectName);
+
+        if (!selectedSubject) {
+            alert('Selected subject details not found (check department and subject name).');
+            return; // Indicate failure
+        }
+        const subjectDuration = selectedSubject.duration;
+
+        const newExamDetails = {
+            department, room, subjectName, teacher, date, startTime, duration: subjectDuration
+        };
+
+        const scheduledExams = getData('scheduledExams');
+        const conflictResult = hasConflict(newExamDetails, scheduledExams);
+
+        if (conflictResult.conflict) {
+            showConflictModal(conflictResult.message);
+            return; // Indicate conflict / failure
+        }
+
+        // No conflicts, calculate final end time and add the exam
+        const endTime = calculateEndTime(date, startTime, subjectDuration);
+        if (!endTime) {
+             alert("Failed to calculate end time. Cannot schedule exam.");
+             return;
+        }
+
+        scheduledExams.push({
+            department: department,
+            room: room,
+            subject: subjectName, // Use 'subject' key consistent with rendering
+            teacher: teacher,
+            date: date,
+            startTime: startTime,
+            endTime: endTime,
+            duration: subjectDuration
+        });
+
+        // Sort before saving to maintain order
+        scheduledExams.sort((a, b) => {
+            const dateComparison = a.date.localeCompare(b.date);
+            if (dateComparison !== 0) return dateComparison;
+            return a.startTime.localeCompare(b.startTime);
+        });
+
+        saveData('scheduledExams', scheduledExams);
+        renderScheduledExams();
+        clearSchedulingFields();
+        // return true; // Indicate success (optional)
+    }
+
+    // --- Auto Scheduling Logic (Revised) ---
+    function autoScheduleExams() {
+        const countInput = document.getElementById('autoScheduleCount');
+        const desiredCount = parseInt(countInput.value);
+        if (isNaN(desiredCount) || desiredCount < 1) {
+            alert("Please enter a valid number of exams to schedule.");
+            return;
+        }
+
+        console.log(`Attempting to auto-schedule ${desiredCount} exams.`);
+
+        const allDepartments = getData('departments');
+        // --- Shuffle resources to improve variety ---
+        const allRooms = shuffleArray([...getData('rooms')]); // Shuffle rooms
+        const allSubjects = shuffleArray([...getData('subjects')]); // Shuffle subjects
+        const allTeachers = shuffleArray([...getData('teachers')]); // Shuffle teachers
+
+        const initialScheduledExams = getData('scheduledExams'); // Get existing schedule
+
+        if (allDepartments.length === 0 || allRooms.length === 0 || allSubjects.length === 0 || allTeachers.length === 0) {
+             alert("Cannot auto-schedule. Please add departments, rooms, subjects, and teachers first.");
+             return;
+        }
+
+        let newlyScheduledExams = []; // Store exams scheduled in *this run*
+        let scheduledCount = 0;
+        let attempts = 0; // Prevent infinite loops
+        // More realistic attempt limit based on slots * resources
+        const maxAttempts = AUTO_SCHEDULE_MAX_DAYS_AHEAD *
+                            ((AUTO_SCHEDULE_END_HOUR - AUTO_SCHEDULE_START_HOUR) * (60 / AUTO_SCHEDULE_TIME_INCREMENT_MINUTES)) *
+                            allRooms.length * allSubjects.length * allTeachers.length;
+
+        let currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0); // Start from the beginning of today
+
+        outerLoop:
+        for (let dayOffset = 0; dayOffset < AUTO_SCHEDULE_MAX_DAYS_AHEAD; dayOffset++) {
+            let loopDate = new Date(currentDate);
+            loopDate.setDate(currentDate.getDate() + dayOffset);
+            // Skip weekends (optional)
+            // const dayOfWeek = loopDate.getDay(); // 0=Sun, 6=Sat
+            // if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+
+            const dateString = loopDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+
+            // Iterate through time slots for the current day
+            for (let hour = AUTO_SCHEDULE_START_HOUR; hour < AUTO_SCHEDULE_END_HOUR; hour++) {
+                for (let minute = 0; minute < 60; minute += AUTO_SCHEDULE_TIME_INCREMENT_MINUTES) {
+                    if (scheduledCount >= desiredCount) break outerLoop; // Target reached
+                    if (attempts++ > maxAttempts * 1.5) { // Safety break with some margin
+                          console.warn(`Auto-scheduling stopped: Maximum attempts (${maxAttempts * 1.5}) reached.`);
+                          alert(`Auto-scheduling stopped: Maximum attempts reached. Check resource availability or increase days ahead.`);
+                          break outerLoop;
+                    }
+
+                    const startTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+
+                    // Try combinations for this time slot using shuffled resources
+                    // Prioritize iterating subjects first for variety
+                     for (const subject of allSubjects) {
+                        // Find matching departments, rooms, teachers for this subject's dept
+                        const deptName = subject.department;
+                        const deptRooms = allRooms.filter(r => r.department === deptName);
+                        const deptTeachers = allTeachers.filter(t => t.department === deptName);
+
+                        if (deptRooms.length === 0 || deptTeachers.length === 0) continue; // Skip if no rooms/teachers for this subject's dept
+
+                        for (const room of deptRooms) {
+                            for (const teacher of deptTeachers) {
+                                 if (scheduledCount >= desiredCount) break outerLoop; // Check again
+
+                                const examDetails = {
+                                    department: deptName,
+                                    room: room.number,
+                                    subjectName: subject.name, // Use subjectName for details obj
+                                    teacher: teacher.name,
+                                    date: dateString,
+                                    startTime: startTime,
+                                    duration: subject.duration
+                                };
+
+                                // --- CRITICAL FIX: Check against *initial* schedule PLUS *newly added* exams ---
+                                const currentCheckSchedule = [...initialScheduledExams, ...newlyScheduledExams];
+                                const conflictResult = hasConflict(examDetails, currentCheckSchedule);
+
+                                if (!conflictResult.conflict) {
+                                    // No conflict found, calculate end time and add to *this run's* list
+                                    const endTime = calculateEndTime(examDetails.date, examDetails.startTime, examDetails.duration);
+
+                                    if (endTime) { // Ensure endTime calculation was successful
+                                        const finalExamData = {
+                                            department: examDetails.department,
+                                            room: examDetails.room,
+                                            subject: examDetails.subjectName, // Use 'subject' key
+                                            teacher: examDetails.teacher,
+                                            date: examDetails.date,
+                                            startTime: examDetails.startTime,
+                                            endTime: endTime,
+                                            duration: examDetails.duration
+                                        };
+
+                                        console.log(`Found slot: ${finalExamData.department}, Room ${finalExamData.room}, ${finalExamData.subject}, ${finalExamData.teacher} on ${finalExamData.date} at ${finalExamData.startTime}`);
+
+                                        newlyScheduledExams.push(finalExamData);
+                                        scheduledCount++;
+
+                                        // Optimization: If a slot is found, maybe break inner loops to try next time slot?
+                                        // For simplicity, we let it continue checking other teachers/rooms for the *same* subject/time
+                                        // This might lead to scheduling the same subject multiple times if possible,
+                                        // but shuffling helps mitigate always picking the *first* subject.
+                                    } else {
+                                         console.warn("Skipping slot due to end time calculation error:", examDetails);
+                                    }
+                                } // else: conflict found, continue loops
+                            } // end teacher loop
+                        } // end room loop
+                    } // end subject loop (primary driver after time)
+                } // end minute loop
+            } // end hour loop
+        } // end day loop
+
+        // --- AFTER LOOP: Save all newly scheduled exams ---
+        if (newlyScheduledExams.length > 0) {
+             let finalSchedule = [...initialScheduledExams, ...newlyScheduledExams];
+             // Sort the final combined schedule
+             finalSchedule.sort((a, b) => {
+                 const dateComparison = a.date.localeCompare(b.date);
+                 if (dateComparison !== 0) return dateComparison;
+                 return a.startTime.localeCompare(b.startTime);
+             });
+             saveData('scheduledExams', finalSchedule);
+             console.log(`Saved ${newlyScheduledExams.length} new exams to localStorage.`);
+        }
+
+        // --- IMPORTANT: Render AFTER the loop finishes and data is saved ---
+        renderScheduledExams(); // Update the table with all scheduled exams
+
+        // Feedback
+        if (scheduledCount === desiredCount) {
+            alert(`Successfully auto-scheduled ${scheduledCount} exams.`);
+        } else if (scheduledCount > 0) {
+            alert(`Auto-scheduling finished. Scheduled ${scheduledCount} out of ${desiredCount} requested exams. No more suitable slots found within the search range/constraints.`);
+        } else {
+            alert(`Could not auto-schedule any exams. Check availability of rooms, teachers, subjects, and time slots, or increase the search range (currently ${AUTO_SCHEDULE_MAX_DAYS_AHEAD} days). Ensure resources are correctly assigned to departments.`);
+        }
+         countInput.value = '5'; // Reset input
+    }
+    // Note: Removed the separate 'scheduleExamInternalCheck' as its logic is now integrated into the main loop using 'hasConflict'.
+
+
+    // --- Render Scheduled Exams ---
+    function renderScheduledExams() {
+        const scheduledExams = getData('scheduledExams');
+        // Sorting is now done before saving, but can be done here too for safety
+        scheduledExams.sort((a, b) => {
+            const dateComparison = a.date.localeCompare(b.date);
+            if (dateComparison !== 0) return dateComparison;
+            return a.startTime.localeCompare(b.startTime);
+        });
+
+        const tableBody = document.getElementById('scheduledExamsBody');
+        tableBody.innerHTML = ''; // Clear previous content
+
+        if (scheduledExams.length === 0) {
+             tableBody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-gray-500">No exams scheduled yet.</td></tr>';
+             return;
+        }
+
+        scheduledExams.forEach((exam, index) => {
+            // Defensive check for missing data (though should be prevented by input validation)
+            const dept = exam.department || 'N/A';
+            const room = exam.room || 'N/A';
+            const subject = exam.subject || 'N/A';
+            const teacher = exam.teacher || 'N/A';
+            const date = exam.date || 'N/A';
+            const startTime = exam.startTime || 'N/A';
+            const endTime = exam.endTime || 'N/A'; // Ensure endTime exists
+
+            const row = document.createElement('tr');
+            row.className = 'border-b hover:bg-gray-50 transition-colors';
+            // Ensure consistent keys used here match those saved
+            row.innerHTML = `
+                <td class="p-3">${dept}</td>
+                <td class="p-3">${room}</td>
+                <td class="p-3">${subject}</td>
+                <td class="p-3">${teacher}</td>
+                <td class="p-3">${date}</td>
+                <td class="p-3">${startTime} - ${endTime}</td>
+                <td class="p-3 no-print">
+                    <button onclick="deleteScheduledExam(${index})" class="text-red-500 hover:text-red-700" title="Delete Exam">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                           <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // --- Delete Scheduled Exam ---
+    function deleteScheduledExam(index) {
+         if (!confirm('Are you sure you want to delete this scheduled exam?')) {
+            return;
+        }
+        const scheduledExams = getData('scheduledExams');
+        if (index >= 0 && index < scheduledExams.length) {
+            scheduledExams.splice(index, 1);
+            // No need to re-sort here if always sorted on save/render
+            saveData('scheduledExams', scheduledExams);
+            renderScheduledExams(); // Re-render the list
+        } else {
+            console.error("Invalid index for deleting scheduled exam:", index);
+             alert("Error: Could not delete the exam. Please refresh the page.");
+        }
+    }
+
+    // --- Clear Scheduling Fields ---
+    function clearSchedulingFields() {
+        document.getElementById('scheduleDepartment').value = '';
+        document.getElementById('scheduleRoom').innerHTML = '<option value="">Select Room</option>'; // Reset options
+        document.getElementById('scheduleSubject').innerHTML = '<option value="">Select Subject</option>'; // Reset options
+        document.getElementById('scheduleTeacher').innerHTML = '<option value="">Select Teacher</option>'; // Reset options
+        document.getElementById('scheduleDate').value = new Date().toISOString().split('T')[0]; // Reset to today
+        document.getElementById('scheduleStartTime').value = '';
+    }
+
+    // --- Clear Scheduling Fields If Needed (e.g., after deleting a resource) ---
+    function clearSchedulingFieldsIfNeeded(removedDept, removedRoom, removedSubject, removedTeacher) {
+        const schedDeptSelect = document.getElementById('scheduleDepartment');
+        const schedRoomSelect = document.getElementById('scheduleRoom');
+        const schedSubjSelect = document.getElementById('scheduleSubject');
+        const schedTeachSelect = document.getElementById('scheduleTeacher');
+
+        const currentDept = schedDeptSelect.value;
+        const currentRoom = schedRoomSelect.value;
+        const currentSubject = schedSubjSelect.value;
+        const currentTeacher = schedTeachSelect.value;
+
+        let needsUpdate = false;
+
+        // If the selected department was removed, clear everything and update dropdowns
+        if (removedDept && currentDept === removedDept) {
+            clearSchedulingFields(); // Clears all fields and resets dependent dropdowns via updateRoomsAndSubjects
+            updateRoomsAndSubjects(); // Ensure dropdowns reflect the cleared department
+            return; // Exit early as everything is cleared
+        }
+
+        // If the selected room was removed AND it belonged to the currently selected department
+        if (removedRoom && currentRoom === removedRoom && currentDept) {
+            // Check if the removed room actually belonged to the selected department
+            const rooms = getData('rooms');
+            if (!rooms.some(r => r.department === currentDept && r.number === removedRoom)) {
+                schedRoomSelect.value = ''; // Clear selection
+                needsUpdate = true;
+            }
+        }
+
+        // If the selected subject was removed AND it belonged to the currently selected department
+        if (removedSubject && currentSubject === removedSubject && currentDept) {
+            const subjects = getData('subjects');
+            if (!subjects.some(s => s.department === currentDept && s.name === removedSubject)) {
+                 schedSubjSelect.value = ''; // Clear selection
+                 needsUpdate = true;
+            }
+        }
+
+        // If the selected teacher was removed AND it belonged to the currently selected department
+        if (removedTeacher && currentTeacher === removedTeacher && currentDept) {
+             const teachers = getData('teachers');
+             if (!teachers.some(t => t.department === currentDept && t.name === removedTeacher)) {
+                 schedTeachSelect.value = ''; // Clear selection
+                 needsUpdate = true;
+             }
+        }
+
+        // If any dependent dropdown was cleared, refresh the options
+        // (updateRoomsAndSubjects handles repopulating based on currentDept)
+        if (needsUpdate) {
+             updateRoomsAndSubjects();
+             // Restore selections if they were not the ones removed
+             if (schedRoomSelect.querySelector(`option[value="${currentRoom}"]`)) schedRoomSelect.value = currentRoom;
+             if (schedSubjSelect.querySelector(`option[value="${currentSubject}"]`)) schedSubjSelect.value = currentSubject;
+             if (schedTeachSelect.querySelector(`option[value="${currentTeacher}"]`)) schedTeachSelect.value = currentTeacher;
+        }
+    }
+
+    // --- Modal Handling ---
+    function showConflictModal(message) {
         const conflictModal = document.getElementById('conflictModal');
-        const conflictMessage = document.getElementById('conflictMessage');
-        
-        conflictMessage.innerHTML = '';
-        if (roomConflict) {
-            conflictMessage.innerHTML += `Room ${room} is already scheduled on ${date} during this time.<br>`;
-        }
-        if (teacherConflict) {
-            conflictMessage.innerHTML += `Teacher ${teacher} is already scheduled on ${date} during this time.`;
-        }
-        
+        const conflictMessageElement = document.getElementById('conflictMessage');
+
+        // Replace newline characters with <br> for HTML display
+        conflictMessageElement.innerHTML = message.replace(/\n/g, '<br>');
         conflictModal.classList.remove('hidden');
         conflictModal.classList.add('flex');
-        return;
+    }
+    function closeConflictModal() {
+        const conflictModal = document.getElementById('conflictModal');
+        conflictModal.classList.remove('flex');
+        conflictModal.classList.add('hidden');
     }
 
-    // Add new exam schedule
-    scheduledExams.push({
-        department,
-        room,
-        subject,
-        teacher,
-        date,
-        startTime,
-        endTime
-    });
+    // --- Print Function ---
+    function printSchedule() {
+        window.print(); // Trigger browser's print dialog
+    }
 
-    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
 
-    // Render scheduled exams
-    renderScheduledExams();
+    // --- Render All Lists Function ---
+    function renderAll() {
+        renderDepartments();
+        renderRooms();
+        renderTeachers();
+        renderSubjects();
+        renderScheduledExams();
+    }
 
-    // Clear input fields
-    document.getElementById('scheduleDepartment').value = '';
-    document.getElementById('scheduleRoom').innerHTML = '<option value="">Select Room</option>';
-    document.getElementById('scheduleSubject').innerHTML = '<option value="">Select Subject</option>';
-    document.getElementById('scheduleTeacher').innerHTML = '<option value="">Select Teacher</option>';
-    document.getElementById('scheduleDate').value = '';
-    document.getElementById('scheduleStartTime').value = '';
-}
 
-function renderScheduledExams() {
-    const scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
-    const scheduledExamsBody = document.getElementById('scheduledExamsBody');
-    scheduledExamsBody.innerHTML = '';
+    // --- Initialization ---
+    window.onload = function() {
+        initializeStorage();
+        renderAll(); // Render existing data
+        updateDepartmentDropdowns(); // Populate top-level dropdowns
+        updateRoomsAndSubjects(); // Populate dependent dropdowns based on initial state
 
-    scheduledExams.forEach((exam, index) => {
-        const row = document.createElement('tr');
-        row.className = 'border-b hover:bg-gray-50';
-        row.innerHTML = `
-            <td class="p-3">${exam.department}</td>
-            <td class="p-3">${exam.room}</td>
-            <td class="p-3">${exam.subject}</td>
-            <td class="p-3">${exam.teacher}</td>
-            <td class="p-3">${exam.date}</td>
-            <td class="p-3">${exam.startTime} - ${exam.endTime}</td>
-            <td class="p-3">
-                <button onclick="deleteScheduledExam(${index})" class="text-red-500 hover:text-red-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-            </td>
-        `;
-        scheduledExamsBody.appendChild(row);
-    });
-}
+         // Set default date for manual scheduling to today and prevent past dates
+        const today = new Date().toISOString().split('T')[0];
+        const scheduleDateInput = document.getElementById('scheduleDate');
+        scheduleDateInput.value = today;
+        scheduleDateInput.min = today;
+    };
 
-function deleteScheduledExam(index) {
-    const scheduledExams = JSON.parse(localStorage.getItem('scheduledExams'));
-    scheduledExams.splice(index, 1);
-    localStorage.setItem('scheduledExams', JSON.stringify(scheduledExams));
-    renderScheduledExams();
-}
-
-function closeConflictModal() {
-    const conflictModal = document.getElementById('conflictModal');
-    conflictModal.classList.remove('flex');
-    conflictModal.classList.add('hidden');
-}
-
-// Initialize on page load
-window.onload = function() {
-    initializeStorage();
-    renderDepartments();
-    renderRooms();
-    renderTeachers();
-    renderSubjects();
-    renderScheduledExams();
-    updateDepartmentDropdowns();
-};
     </script>
 </body>
 </html>
